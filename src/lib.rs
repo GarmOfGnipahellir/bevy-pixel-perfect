@@ -3,11 +3,11 @@ pub mod camera;
 pub mod commands;
 pub mod materials;
 
-use bevy::{prelude::*, sprite::Material2dPlugin};
+use bevy::{asset::load_internal_asset, prelude::*, sprite::Material2dPlugin};
 
 use crate::{
     camera::{update_pixel_perfect_camera, PixelPerfectCamera},
-    materials::PixelPerfectUpscaleMaterial,
+    materials::{PixelPerfectUpscaleMaterial, UPSCALE_SHADER_HANDLE},
 };
 
 pub mod prelude {
@@ -21,6 +21,13 @@ pub struct PixelPerfectPlugin;
 
 impl Plugin for PixelPerfectPlugin {
     fn build(&self, app: &mut App) {
+        load_internal_asset!(
+            app,
+            UPSCALE_SHADER_HANDLE,
+            "upscale.wgsl",
+            Shader::from_wgsl
+        );
+
         // NOTE: Can feature gate this
         {
             use bevy::{
