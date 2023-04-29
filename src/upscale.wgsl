@@ -15,7 +15,9 @@ fn fragment(
     @builtin(position) position: vec4<f32>,
     #import bevy_sprite::mesh2d_vertex_output
 ) -> @location(0) vec4<f32> {
-    // Get screen position with coordinates from 0 to 1
+    // Bilinear upscale, reference impl:
+    // https://github.com/rsn8887/Sharp-Bilinear-Shaders/blob/master/Copy_To_RetroPie/shaders/sharp-bilinear-simple.glsl
+
     let uv: vec2<f32> = coords_to_viewport_uv(position.xy, view.viewport);
     let out_size: vec2<f32> = view.viewport.zw;
     let texel = uv * in_size;
@@ -27,10 +29,6 @@ fn fragment(
     let f = (center_dist - clamp(center_dist, -region, region)) * scale + 0.5;
     let mod_texel = floor(texel) + f;
 
-    // Should implement a bilinear upscale, found this reference impl:
-    // https://github.com/rsn8887/Sharp-Bilinear-Shaders/blob/master/Copy_To_RetroPie/shaders/sharp-bilinear-simple.glsl
-
-    // Sample each color channel with an arbitrary shift
     var output_color = vec4<f32>(
         textureSample(texture, our_sampler, mod_texel / in_size).rgb,
         1.0
