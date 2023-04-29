@@ -1,5 +1,5 @@
 use bevy::{prelude::*, render::camera::ScalingMode};
-use bevy_pixel_perfect::{AxonometricProjection, CameraAxonometricBundle, PixelPerfectPlugin};
+use bevy_pixel_perfect::PixelPerfectPlugin;
 
 fn main() {
     App::new()
