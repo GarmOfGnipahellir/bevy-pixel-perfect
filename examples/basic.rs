@@ -1,4 +1,4 @@
-use bevy::{core_pipeline::clear_color::ClearColorConfig, prelude::*, render::camera::ScalingMode};
+use bevy::{prelude::*, render::camera::ScalingMode};
 use bevy_pixel_perfect::prelude::*;
 
 fn main() {
@@ -38,10 +38,6 @@ fn setup(
                 ..Default::default()
             }
             .into(),
-            camera_3d: Camera3d {
-                clear_color: ClearColorConfig::Custom(Color::RED),
-                ..Default::default()
-            },
             camera: source_camera,
             ..Default::default()
         },
