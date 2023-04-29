@@ -8,6 +8,7 @@ fn main() {
         .add_plugin(PixelPerfectPlugin)
         .add_plugin(bevy_inspector_egui::quick::WorldInspectorPlugin::new())
         .add_startup_system(setup)
+        .add_system(rotate)
         .run();
 }
 
@@ -42,4 +43,15 @@ fn setup(
             ..Default::default()
         },
     ));
+}
+
+fn rotate(mut query: Query<&mut Transform, With<Handle<Scene>>>, time: Res<Time>) {
+    for mut transform in query.iter_mut() {
+        use std::f32::consts::TAU;
+
+        let time = time.elapsed_seconds() * 0.5;
+        let steps = 16.0;
+        let y_angle = ((time * steps).floor() / steps) * TAU;
+        transform.rotation = Quat::from_euler(EulerRot::YXZ, y_angle, 0.0, 0.0);
+    }
 }
