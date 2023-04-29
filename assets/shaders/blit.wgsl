@@ -15,6 +15,9 @@ fn fragment(
     // Get screen position with coordinates from 0 to 1
     let uv = coords_to_viewport_uv(position.xy, view.viewport);
 
+    // Should implement a bilinear upscale, found this reference impl for Unity:
+    // https://github.com/AlexanderOcias/UnityPixelArtCamera/blob/master/Assets/Ocias/PixelArtCamera/BilinearSharp.shader
+
     // Sample each color channel with an arbitrary shift
     var output_color = vec4<f32>(
         textureSample(texture, our_sampler, uv).rgb,

@@ -1,6 +1,6 @@
 pub mod axonometric;
 pub mod camera;
-pub mod render_target;
+pub mod commands;
 
 use bevy::{
     prelude::*,
@@ -9,10 +9,11 @@ use bevy::{
     sprite::{Material2d, Material2dPlugin},
 };
 
-use crate::render_target::{update_render_target, PixelPerfectRenderTarget};
+use crate::camera::{update_pixel_perfect_camera, PixelPerfectCamera};
 
 pub mod prelude {
-    pub use crate::render_target::PixelPerfectRenderTarget;
+    pub use crate::camera::PixelPerfectCamera;
+    pub use crate::commands::PixelPerfectCommands;
     pub use crate::{PixelPerfectBlitMaterial, PixelPerfectPlugin};
 }
 
@@ -48,9 +49,9 @@ impl Plugin for PixelPerfectPlugin {
                 );
         }
 
-        app.register_type::<PixelPerfectRenderTarget>()
+        app.register_type::<PixelPerfectCamera>()
             .add_plugin(Material2dPlugin::<PixelPerfectBlitMaterial>::default())
-            .add_system(update_render_target.in_base_set(CoreSet::PostUpdate));
+            .add_system(update_pixel_perfect_camera.in_base_set(CoreSet::PostUpdate));
 
         let dot = bevy_mod_debugdump::render_graph_dot(
             app,
