@@ -5,7 +5,7 @@ use bevy::{
     window::{PrimaryWindow, WindowCreated, WindowRef, WindowResized},
 };
 
-use crate::PixelPerfectBlitMaterial;
+use crate::prelude::PixelPerfectUpscaleMaterial;
 
 #[derive(Component, Debug, Clone, Reflect, FromReflect)]
 #[reflect(Component, Default)]
@@ -13,7 +13,7 @@ pub struct PixelPerfectCamera {
     pub render_height: u32,
     pub window: WindowRef,
     pub render_target: Handle<Image>,
-    pub blit_material: Handle<PixelPerfectBlitMaterial>,
+    pub upscale_material: Handle<PixelPerfectUpscaleMaterial>,
 }
 
 impl Default for PixelPerfectCamera {
@@ -22,7 +22,7 @@ impl Default for PixelPerfectCamera {
             render_height: 200,
             window: Default::default(),
             render_target: Default::default(),
-            blit_material: Default::default(),
+            upscale_material: Default::default(),
         }
     }
 }
@@ -34,7 +34,7 @@ pub fn update_pixel_perfect_camera(
     windows: Query<&Window>,
     mut query: Query<&PixelPerfectCamera>,
     mut images: ResMut<Assets<Image>>,
-    mut blit_materials: ResMut<Assets<PixelPerfectBlitMaterial>>,
+    mut upscale_materials: ResMut<Assets<PixelPerfectUpscaleMaterial>>,
 ) {
     let primary_window: Option<Entity> = primary_windows.iter().next();
 
@@ -59,8 +59,8 @@ pub fn update_pixel_perfect_camera(
             ..Default::default()
         });
 
-        let blit_material: &mut PixelPerfectBlitMaterial =
-            blit_materials.get_mut(&camera.blit_material).unwrap();
-        blit_material.source_image = camera.render_target.clone();
+        let upscale_material: &mut PixelPerfectUpscaleMaterial =
+            upscale_materials.get_mut(&camera.upscale_material).unwrap();
+        upscale_material.source_image = camera.render_target.clone();
     }
 }

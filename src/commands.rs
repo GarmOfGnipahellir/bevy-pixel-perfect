@@ -12,14 +12,14 @@ use bevy::{
     sprite::MaterialMesh2dBundle,
 };
 
-use crate::{camera::PixelPerfectCamera, PixelPerfectBlitMaterial};
+use crate::prelude::{PixelPerfectCamera, PixelPerfectUpscaleMaterial};
 
 #[derive(SystemParam)]
 pub struct PixelPerfectCommands<'w, 's> {
     commands: Commands<'w, 's>,
     meshes: ResMut<'w, Assets<Mesh>>,
     images: ResMut<'w, Assets<Image>>,
-    blit_materials: ResMut<'w, Assets<PixelPerfectBlitMaterial>>,
+    upscale_materials: ResMut<'w, Assets<PixelPerfectUpscaleMaterial>>,
 }
 
 impl<'w, 's> PixelPerfectCommands<'w, 's> {
@@ -65,19 +65,19 @@ impl<'w, 's> PixelPerfectCommands<'w, 's> {
 
         source_camera.target = RenderTarget::Image(render_target.clone());
 
-        let blit_material: Handle<PixelPerfectBlitMaterial> =
-            self.blit_materials.add(PixelPerfectBlitMaterial {
+        let upscale_material: Handle<PixelPerfectUpscaleMaterial> =
+            self.upscale_materials.add(PixelPerfectUpscaleMaterial {
                 source_image: render_target.clone(),
             });
 
         self.commands.spawn((
             Name::new("Pixel Perfect Upscale Mesh"),
-            MaterialMesh2dBundle::<PixelPerfectBlitMaterial> {
+            MaterialMesh2dBundle::<PixelPerfectUpscaleMaterial> {
                 mesh: self
                     .meshes
                     .add(Mesh::from(shape::Quad::new(Vec2::new(2.0, 1.0))))
                     .into(),
-                material: blit_material.clone(),
+                material: upscale_material.clone(),
                 ..Default::default()
             },
             RenderLayers::layer(render_layer),
@@ -102,7 +102,7 @@ impl<'w, 's> PixelPerfectCommands<'w, 's> {
                 render_height,
                 window,
                 render_target,
-                blit_material,
+                upscale_material,
             },
         ));
     }
