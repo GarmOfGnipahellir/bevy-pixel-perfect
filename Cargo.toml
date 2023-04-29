@@ -7,3 +7,7 @@ edition = "2021"
 
 [dependencies]
 bevy = { version = "0.10", features = ["jpeg"] }
+bevy_mod_debugdump = "0.7"
+
+[dev-dependencies]
+bevy-inspector-egui = "0.18"
