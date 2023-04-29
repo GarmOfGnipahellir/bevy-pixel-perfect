@@ -62,5 +62,6 @@ pub fn update_pixel_perfect_camera(
         let upscale_material: &mut PixelPerfectUpscaleMaterial =
             upscale_materials.get_mut(&camera.upscale_material).unwrap();
         upscale_material.source_image = camera.render_target.clone();
+        upscale_material.input_size = Vec2::new(pixel_width as f32, camera.render_height as f32);
     }
 }

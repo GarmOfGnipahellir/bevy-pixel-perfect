@@ -54,7 +54,7 @@ impl<'w, 's> PixelPerfectCommands<'w, 's> {
                         | TextureUsages::RENDER_ATTACHMENT,
                     view_formats: &[],
                 },
-                sampler_descriptor: ImageSampler::nearest(),
+                sampler_descriptor: ImageSampler::linear(),
                 ..Default::default()
             };
 
@@ -68,6 +68,7 @@ impl<'w, 's> PixelPerfectCommands<'w, 's> {
         let upscale_material: Handle<PixelPerfectUpscaleMaterial> =
             self.upscale_materials.add(PixelPerfectUpscaleMaterial {
                 source_image: render_target.clone(),
+                input_size: Vec2::new(render_height as f32, render_height as f32),
             });
 
         self.commands.spawn((

@@ -12,6 +12,8 @@ pub struct PixelPerfectUpscaleMaterial {
     #[texture(0)]
     #[sampler(1)]
     pub source_image: Handle<Image>,
+    #[uniform(2)]
+    pub input_size: Vec2,
 }
 
 impl Material2d for PixelPerfectUpscaleMaterial {

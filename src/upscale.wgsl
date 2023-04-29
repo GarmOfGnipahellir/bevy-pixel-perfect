@@ -7,20 +7,32 @@ var texture: texture_2d<f32>;
 @group(1) @binding(1)
 var our_sampler: sampler;
 
+@group(1) @binding(2)
+var<uniform> in_size: vec2<f32>;
+
 @fragment
 fn fragment(
     @builtin(position) position: vec4<f32>,
     #import bevy_sprite::mesh2d_vertex_output
 ) -> @location(0) vec4<f32> {
     // Get screen position with coordinates from 0 to 1
-    let uv = coords_to_viewport_uv(position.xy, view.viewport);
+    let uv: vec2<f32> = coords_to_viewport_uv(position.xy, view.viewport);
+    let out_size: vec2<f32> = view.viewport.zw;
+    let texel = uv * in_size;
+    let scale = max(floor(out_size / in_size), vec2<f32>(1.0, 1.0)) * 2.0;
+    let region = 0.5 - 0.5 / scale;
 
-    // Should implement a bilinear upscale, found this reference impl for Unity:
-    // https://github.com/AlexanderOcias/UnityPixelArtCamera/blob/master/Assets/Ocias/PixelArtCamera/BilinearSharp.shader
+    let s = fract(texel);
+    let center_dist = s - 0.5;
+    let f = (center_dist - clamp(center_dist, -region, region)) * scale + 0.5;
+    let mod_texel = floor(texel) + f;
+
+    // Should implement a bilinear upscale, found this reference impl:
+    // https://github.com/rsn8887/Sharp-Bilinear-Shaders/blob/master/Copy_To_RetroPie/shaders/sharp-bilinear-simple.glsl
 
     // Sample each color channel with an arbitrary shift
     var output_color = vec4<f32>(
-        textureSample(texture, our_sampler, uv).rgb,
+        textureSample(texture, our_sampler, mod_texel / in_size).rgb,
         1.0
     );
 
