@@ -3,17 +3,22 @@ pub mod camera;
 pub mod commands;
 pub mod materials;
 
-use bevy::{asset::load_internal_asset, prelude::*, sprite::Material2dPlugin};
+use bevy::{
+    asset::{load_internal_asset, load_internal_binary_asset},
+    prelude::*,
+    render::texture::{CompressedImageFormats, ImageType},
+    sprite::Material2dPlugin,
+};
 
 use crate::{
     camera::{update_pixel_perfect_camera, PixelPerfectCamera},
-    materials::{PixelPerfectUpscaleMaterial, UPSCALE_SHADER_HANDLE},
+    materials::*,
 };
 
 pub mod prelude {
     pub use crate::camera::PixelPerfectCamera;
     pub use crate::commands::PixelPerfectCommands;
-    pub use crate::materials::PixelPerfectUpscaleMaterial;
+    pub use crate::materials::{PixelPerfectCellShadeMaterial, PixelPerfectUpscaleMaterial};
     pub use crate::PixelPerfectPlugin;
 }
 
@@ -26,6 +31,26 @@ impl Plugin for PixelPerfectPlugin {
             UPSCALE_SHADER_HANDLE,
             "upscale.wgsl",
             Shader::from_wgsl
+        );
+        load_internal_asset!(
+            app,
+            CELL_SHADE_SHADER_HANDLE,
+            "cell_shade.wgsl",
+            Shader::from_wgsl
+        );
+        load_internal_binary_asset!(
+            app,
+            BLUE_NOISE_64_IMAGE_HANDLE,
+            "BlueNoise_64.png",
+            |b: &[u8]| {
+                Image::from_buffer(
+                    b,
+                    ImageType::Extension("png"),
+                    CompressedImageFormats::all(),
+                    true,
+                )
+                .unwrap()
+            }
         );
 
         // NOTE: Can feature gate this
@@ -58,6 +83,7 @@ impl Plugin for PixelPerfectPlugin {
 
         app.register_type::<PixelPerfectCamera>()
             .add_plugin(Material2dPlugin::<PixelPerfectUpscaleMaterial>::default())
+            .add_plugin(MaterialPlugin::<PixelPerfectCellShadeMaterial>::default())
             .add_system(update_pixel_perfect_camera.in_base_set(CoreSet::PostUpdate));
 
         let dot = bevy_mod_debugdump::render_graph_dot(
